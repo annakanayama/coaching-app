@@ -1,8 +1,6 @@
 bash
 
-cat /home/claude/coaching_app_v3.html
-出力
-
+cat > /mnt/user-data/outputs/index.html << 'HTMLEOF'
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -20,8 +18,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
 .nav-btn.active{background:#fff;color:#1A1A2E;border-color:#fff}
 .nav-btn:hover:not(.active){background:rgba(255,255,255,0.1)}
 .main{max-width:900px;margin:0 auto;padding:24px}
-
-/* ===== 全体サマリー ===== */
 .summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
 .summary-kpi{background:#fff;border-radius:12px;border:1px solid #EBEBEB;padding:16px;text-align:center}
 .summary-kpi .label{font-size:11px;color:#888;margin-bottom:6px}
@@ -53,21 +49,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
 .notion-link{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#F8F9FA;border-radius:8px;border:1px solid #EBEBEB;text-decoration:none;color:#1A1A2E;font-size:13px;transition:all .15s}
 .notion-link:hover{background:#fff;border-color:#1A1A2E}
 .notion-link-arrow{margin-left:auto;color:#aaa;font-size:12px}
-
-/* ===== 個別ダッシュボード ===== */
 .tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
 .tab-btn{padding:8px 18px;border-radius:20px;border:1px solid #D0D5DD;background:#fff;color:#666;font-size:13px;cursor:pointer;transition:all .15s;font-family:inherit}
 .tab-btn.active{background:#1A1A2E;color:#fff;border-color:#1A1A2E}
 .tab-btn:hover:not(.active){background:#F5F5F5}
-
-/* カルテ内タブ */
 .carte-tabs{display:flex;gap:0;margin-bottom:0;border-bottom:2px solid #EBEBEB}
 .carte-tab{padding:10px 18px;border:none;background:transparent;color:#888;font-size:13px;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
 .carte-tab.active{color:#1A1A2E;font-weight:600;border-bottom-color:#1A1A2E}
 .carte-tab:hover:not(.active){color:#555}
 .carte-panel{display:none;padding:20px 0 0}
 .carte-panel.show{display:block}
-
 .loading{text-align:center;padding:60px;color:#888;font-size:14px}
 .spinner{width:32px;height:32px;border:3px solid #E0E0E0;border-top:3px solid #1A1A2E;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -96,8 +87,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
 .badge-wip{background:#FEF3C7;color:#92400E}
 .badge-todo{background:#F3F4F6;color:#4B5563}
 .memo-box{background:#FFFBEB;border-radius:8px;padding:14px;font-size:13px;color:#555;line-height:1.7;border:1px solid #FDE68A}
-
-/* カルテ詳細スタイル */
 .carte-block{margin-bottom:20px}
 .carte-block-title{font-size:12px;font-weight:700;color:#1A1A2E;background:#F0F4FF;padding:6px 12px;border-radius:6px;margin-bottom:8px;display:inline-block}
 .carte-block-content{font-size:13px;color:#444;line-height:1.8;white-space:pre-wrap}
@@ -111,24 +100,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
 .review-label{font-size:10px;font-weight:700;color:#888;margin-bottom:6px;letter-spacing:.05em}
 .review-val{font-size:12px;color:#444;line-height:1.7;white-space:pre-wrap}
 .coach-memo{background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:16px;font-size:13px;color:#555;line-height:1.8;white-space:pre-wrap}
-
-.ai-card{background:#fff;border-radius:12px;border:1px solid #EBEBEB;padding:20px;margin-top:16px}
-.ai-title{font-size:13px;font-weight:600;color:#888;margin-bottom:14px}
-.ai-btn{width:100%;padding:12px;border-radius:8px;border:1px solid #D0D5DD;background:#F8F9FA;color:#1A1A2E;font-size:13px;cursor:pointer;font-family:inherit;transition:background .15s}
-.ai-btn:hover{background:#EBEBEB}
-.ai-loading{display:none;align-items:center;gap:8px;font-size:13px;color:#888;margin-top:12px}
-.ai-loading.show{display:flex}
-.dot{width:6px;height:6px;border-radius:50%;background:#888;animation:pulse 1.2s infinite}
-.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
-@keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
-.ai-result{display:none;margin-top:14px;font-size:13px;line-height:1.8;color:#333;background:#F8F9FA;border-radius:8px;padding:14px}
-.ai-result.show{display:block}
 .empty{text-align:center;padding:40px;color:#aaa;font-size:13px}
 @media(max-width:600px){.kpi-grid,.summary-grid,.carte-grid,.monthly-review{grid-template-columns:1fr}.student-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-
 <div class="header">
   <h1>📋 受講生コーチングダッシュボード</h1>
   <div class="header-nav">
@@ -136,7 +112,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
     <button class="nav-btn" id="btn-detail" onclick="showView('detail')">👤 個別</button>
   </div>
 </div>
-
 <div class="main">
   <div id="view-summary">
     <div id="summary-content"><div class="loading"><div class="spinner"></div>データを読み込み中...</div></div>
@@ -146,18 +121,17 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
     <div id="detail-content"><div class="loading"><div class="spinner"></div>データを読み込み中...</div></div>
   </div>
 </div>
-
 <script>
-const SPREADSHEET_ID = "1VTo-TN1H3yXCQh9dyOOnM80PX-8q4ege6-pLhL7NsnI";
-const API_KEY        = "AIzaSyAlzB9Duw6IP8TVCDlmyxkj8ZJ_fEfihlU";
-const NOTION_LINKS = {
+const SPREADSHEET_ID="1VTo-TN1H3yXCQh9dyOOnM80PX-8q4ege6-pLhL7NsnI";
+const API_KEY="AIzaSyAlzB9Duw6IP8TVCDlmyxkj8ZJ_fEfihlU";
+const NOTION_LINKS={
   "S001":"https://app.notion.com/p/38ee7faedfc081469408f82d930aa6c2",
   "S002":"https://app.notion.com/p/38ee7faedfc081808561fd686c1fc084",
   "S003":"https://app.notion.com/p/38ee7faedfc081c79dffe70d11854388",
   "S004":"https://app.notion.com/p/38ee7faedfc081548490d0b26a0f4735",
-  "top": "https://app.notion.com/p/38ee7faedfc081bc82e4c35f2e1fcfdf"
+  "top":"https://app.notion.com/p/38ee7faedfc081bc82e4c35f2e1fcfdf"
 };
-const SHEETS_BASE = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values`;
+const SHEETS_BASE=`https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values`;
 let allData={masters:[],sales:[],history:[],tasks:[],cartes:[]};
 let clients=[];
 let currentIdx=0;
@@ -225,27 +199,17 @@ function buildClients(){
       tasks:taskRows.map(t=>({text:t[3]||'',status:t[6]||'未着手'})),
       doneTasks,wipTasks,todoTasks,latestSales,totalSales,
       carte:{
-        motivation:carteRow[2]||'',
-        goal:carteRow[3]||'',
-        vision:carteRow[4]||'',
-        wantMost:carteRow[5]||'',
-        strengths:carteRow[6]||'',
-        cautions:carteRow[7]||'',
-        actionStyle:carteRow[8]||'',
-        timetable:carteRow[9]||'',
-        reviewGoal:carteRow[10]||'',
-        reviewObs:carteRow[11]||'',
-        reviewAnal:carteRow[12]||'',
-        reviewJudge:carteRow[13]||'',
-        reviewGood:carteRow[14]||'',
-        coachMemo:carteRow[15]||'',
+        motivation:carteRow[2]||'',goal:carteRow[3]||'',vision:carteRow[4]||'',
+        wantMost:carteRow[5]||'',strengths:carteRow[6]||'',cautions:carteRow[7]||'',
+        actionStyle:carteRow[8]||'',timetable:carteRow[9]||'',
+        reviewGoal:carteRow[10]||'',reviewObs:carteRow[11]||'',
+        reviewAnal:carteRow[12]||'',reviewJudge:carteRow[13]||'',
+        reviewGood:carteRow[14]||'',coachMemo:carteRow[15]||'',
       },
-      aiContext:`${r[1]}さん、${r[5]||''}。最新月売上${latestSales>0?Math.round(latestSales/10000)+'万円':'不明'}、粗利率${margin}%。`,
     };
   });
 }
 
-// ===== 全体サマリー =====
 function renderSummary(){
   const totalSales=clients.reduce((s,c)=>s+c.latestSales,0);
   const totalDone=clients.reduce((s,c)=>s+c.doneTasks,0);
@@ -319,7 +283,6 @@ function goToDetail(idx){
   renderClient(clients[idx]);
 }
 
-// ===== タブ =====
 function renderTabs(){
   document.getElementById('tabs-area').innerHTML=
     clients.map((c,i)=>`<button class="tab-btn${i===0?' active':''}" onclick="switchTab(${i})">${c.name}</button>`).join('')+
@@ -333,22 +296,17 @@ function switchTab(idx){
   renderClient(clients[idx]);
 }
 
-// ===== 個別 =====
 function renderClient(c){
   if(!c){document.getElementById('detail-content').innerHTML='<div class="empty">データがありません</div>';return;}
   const bc=s=>s==='完了'?'badge-done':s==='進行中'?'badge-wip':'badge-todo';
   const ti=s=>s==='完了'?'✅':s==='進行中'?'🔄':'⭕';
   const ct=c.carte;
-
   document.getElementById('detail-content').innerHTML=`
     <div class="card">
       <div class="card-inner">
         <div class="profile">
           <div class="avatar">${c.initials}</div>
-          <div>
-            <div class="profile-name">${c.name}</div>
-            <div class="profile-sub">${c.course}</div>
-          </div>
+          <div><div class="profile-name">${c.name}</div><div class="profile-sub">${c.course}</div></div>
           <span style="margin-left:auto;font-size:11px;background:#F0FDF4;color:#065F46;padding:4px 12px;border-radius:20px;font-weight:600">${c.status}</span>
         </div>
         <div class="kpi-grid">
@@ -358,8 +316,6 @@ function renderClient(c){
           <div class="kpi"><div class="kpi-label">ステータス</div><div class="kpi-val" style="font-size:15px">${c.status}</div></div>
         </div>
       </div>
-
-      <!-- カルテ内タブ -->
       <div style="border-top:1px solid #EBEBEB">
         <div class="carte-tabs">
           <button class="carte-tab active" onclick="switchCarteTab('sales',this)">📈 売上・実績</button>
@@ -368,13 +324,9 @@ function renderClient(c){
           <button class="carte-tab" onclick="switchCarteTab('task',this)">✅ タスク</button>
         </div>
         <div class="card-inner">
-
-          <!-- 売上・実績 -->
           <div class="carte-panel show" id="panel-sales">
-            ${c.chartData.length>0?`<div class="section-label">売上推移（万円）</div><div class="chart-wrap"><canvas id="salesChart"></canvas></div>`:''}
+            ${c.chartData.length>0?`<div class="section-label">売上推移（万円）</div><div class="chart-wrap"><canvas id="salesChart"></canvas></div>`:'<div class="empty">売上データなし</div>'}
           </div>
-
-          <!-- カルテ詳細 -->
           <div class="carte-panel" id="panel-carte">
             ${ct.goal?`<div class="carte-block"><span class="carte-block-title">🎯 半年後の目標</span><div class="carte-block-content" style="font-size:15px;font-weight:600;color:#534AB7">${ct.goal}</div></div>`:''}
             <div class="carte-grid">
@@ -388,8 +340,6 @@ function renderClient(c){
             ${ct.actionStyle?`<div class="carte-block"><span class="carte-block-title">🏃 行動スタイル</span><div class="carte-block-content">${ct.actionStyle}</div></div>`:''}
             ${ct.coachMemo?`<div class="carte-block"><span class="carte-block-title">📝 コーチメモ</span><div class="coach-memo">${ct.coachMemo}</div></div>`:''}
           </div>
-
-          <!-- コーチング履歴 -->
           <div class="carte-panel" id="panel-coaching">
             <div class="section-label">月次振り返り</div>
             <div class="monthly-review" style="margin-bottom:20px">
@@ -402,28 +352,17 @@ function renderClient(c){
             <div class="section-label">面談履歴</div>
             ${c.history.length>0?c.history.map(h=>`<div class="history-item"><div class="history-date">${h.date}</div><div class="history-text">${h.text}</div></div>`).join(''):'<div class="empty" style="padding:20px">履歴なし</div>'}
           </div>
-
-          <!-- タスク -->
           <div class="carte-panel" id="panel-task">
             ${c.tasks.length>0?c.tasks.map(t=>`<div class="task-item"><div class="task-left"><span>${ti(t.status)}</span>${t.text}</div><span class="badge ${bc(t.status)}">${t.status}</span></div>`).join(''):'<div class="empty" style="padding:20px">タスクなし</div>'}
             ${c.memo?`<div class="divider"></div><div class="section-label">特記事項</div><div class="memo-box">${c.memo}</div>`:''}
           </div>
-
         </div>
       </div>
-    </div>
-
-    <div class="ai-card">
-      <div class="ai-title">✨ AI コーチングサマリー</div>
-      <button class="ai-btn" id="ai-btn" onclick="generateSummary()">✦ AI サマリーを生成する →</button>
-      <div class="ai-loading" id="ai-loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Claude が分析中...</span></div>
-      <div class="ai-result" id="ai-result"></div>
     </div>`;
-
   if(c.chartData.length>0) drawChart(c);
 }
 
-function switchCarteTab(panel, btn){
+function switchCarteTab(panel,btn){
   document.querySelectorAll('.carte-tab').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.carte-panel').forEach(p=>p.classList.remove('show'));
   btn.classList.add('active');
@@ -444,28 +383,11 @@ function showView(v){
   document.getElementById('btn-summary').classList.toggle('active',v==='summary');
   document.getElementById('btn-detail').classList.toggle('active',v==='detail');
 }
-
-async function generateSummary(){
-  const c=clients[currentIdx];
-  document.getElementById('ai-btn').style.display='none';
-  document.getElementById('ai-loading').classList.add('show');
-  const ct=c.carte;
-  const prompt=`あなたは経験豊富なビジネスコーチです。以下の受講生データをもとに、コーチング視点での簡潔なサマリーを日本語で生成してください。\n受講生: ${c.name}（${c.course}）\n目標: ${ct.goal}\n強み: ${ct.strengths}\n注意点: ${ct.cautions}\n参加動機: ${ct.motivation}\n最新売上: ${c.kpi.sales}、粗利率: ${c.kpi.margin}\n未完了タスク: ${c.tasks.filter(t=>t.status!=='完了').map(t=>t.text).join(', ')||'なし'}\nコーチメモ: ${ct.coachMemo}\n\n以下の形式で出力してください（プレーンテキスト）:\n【現状評価】1〜2文\n【強み】箇条書き2点\n【次のアクション】具体的なアクション2点\n【次回セッションで確認すること】1点`;
-  try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
-    const data=await res.json();
-    const text=data.content?.find(b=>b.type==='text')?.text||'サマリーを生成できませんでした。';
-    document.getElementById('ai-loading').classList.remove('show');
-    document.getElementById('ai-result').innerHTML=text.replace(/\n/g,'<br>');
-    document.getElementById('ai-result').classList.add('show');
-  }catch(e){
-    document.getElementById('ai-loading').classList.remove('show');
-    document.getElementById('ai-result').innerHTML='エラーが発生しました。もう一度お試しください。';
-    document.getElementById('ai-result').classList.add('show');
-    document.getElementById('ai-btn').style.display='block';
-  }
-}
 </script>
 </body>
 </html>
-完了
+HTMLEOF
+echo "done"
+出力
+
+done
