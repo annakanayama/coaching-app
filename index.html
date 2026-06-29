@@ -1,3 +1,8 @@
+bash
+
+cat /home/claude/coaching_app_v3.html
+出力
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -6,25 +11,68 @@
 <title>受講生コーチングダッシュボード</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
-/* ===== 設定 ここだけ書き換えてください ===== */
-/* STEP3でSpreadsheet IDとAPIキーを貼り付けます */
-
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;background:#F8F9FA;color:#1A1A2E;min-height:100vh}
 .header{background:#1A1A2E;padding:16px 24px;display:flex;align-items:center;gap:12px}
 .header h1{color:#fff;font-size:16px;font-weight:500}
-.header .subtitle{color:rgba(255,255,255,0.5);font-size:12px;margin-left:auto}
-.config-bar{background:#FFF8E1;border-bottom:1px solid #FFD54F;padding:10px 24px;font-size:12px;color:#E65100;display:flex;align-items:center;gap:8px}
-.config-bar a{color:#1565C0}
+.header-nav{display:flex;gap:8px;margin-left:auto}
+.nav-btn{padding:6px 14px;border-radius:16px;border:1px solid rgba(255,255,255,0.3);background:transparent;color:rgba(255,255,255,0.7);font-size:12px;cursor:pointer;transition:all .15s;font-family:inherit}
+.nav-btn.active{background:#fff;color:#1A1A2E;border-color:#fff}
+.nav-btn:hover:not(.active){background:rgba(255,255,255,0.1)}
 .main{max-width:900px;margin:0 auto;padding:24px}
+
+/* ===== 全体サマリー ===== */
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.summary-kpi{background:#fff;border-radius:12px;border:1px solid #EBEBEB;padding:16px;text-align:center}
+.summary-kpi .label{font-size:11px;color:#888;margin-bottom:6px}
+.summary-kpi .val{font-size:24px;font-weight:600;color:#1A1A2E}
+.summary-kpi .sub{font-size:11px;color:#888;margin-top:4px}
+.section-card{background:#fff;border-radius:12px;border:1px solid #EBEBEB;padding:20px;margin-bottom:16px}
+.section-head{font-size:13px;font-weight:600;color:#888;letter-spacing:.05em;margin-bottom:14px}
+.student-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.student-card{background:#F8F9FA;border-radius:10px;border:1px solid #EBEBEB;padding:16px;cursor:pointer;transition:all .15s}
+.student-card:hover{border-color:#1A1A2E;background:#fff;transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.sc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.sc-avatar{width:36px;height:36px;border-radius:50%;background:#DBEAFE;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;color:#1D4ED8;flex-shrink:0}
+.sc-name{font-size:14px;font-weight:600;color:#1A1A2E}
+.sc-course{font-size:11px;color:#888;margin-top:1px}
+.sc-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.sc-kpi{background:#fff;border-radius:6px;padding:8px;text-align:center;border:1px solid #F0F0F0}
+.sc-kpi-label{font-size:10px;color:#aaa;margin-bottom:2px}
+.sc-kpi-val{font-size:13px;font-weight:600;color:#1A1A2E}
+.sc-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.sc-tag{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+.tag-done{background:#D1FAE5;color:#065F46}
+.tag-wip{background:#FEF3C7;color:#92400E}
+.tag-todo{background:#F3F4F6;color:#4B5563}
+.progress-table{width:100%;border-collapse:collapse;font-size:12px}
+.progress-table th{text-align:left;padding:8px 10px;background:#F8F9FA;color:#888;font-weight:500;border-bottom:1px solid #EBEBEB}
+.progress-table td{padding:8px 10px;border-bottom:1px solid #F5F5F5;vertical-align:middle}
+.progress-table tr:last-child td{border-bottom:none}
+.notion-links{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.notion-link{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#F8F9FA;border-radius:8px;border:1px solid #EBEBEB;text-decoration:none;color:#1A1A2E;font-size:13px;transition:all .15s}
+.notion-link:hover{background:#fff;border-color:#1A1A2E}
+.notion-link-arrow{margin-left:auto;color:#aaa;font-size:12px}
+
+/* ===== 個別ダッシュボード ===== */
 .tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
 .tab-btn{padding:8px 18px;border-radius:20px;border:1px solid #D0D5DD;background:#fff;color:#666;font-size:13px;cursor:pointer;transition:all .15s;font-family:inherit}
 .tab-btn.active{background:#1A1A2E;color:#fff;border-color:#1A1A2E}
 .tab-btn:hover:not(.active){background:#F5F5F5}
+
+/* カルテ内タブ */
+.carte-tabs{display:flex;gap:0;margin-bottom:0;border-bottom:2px solid #EBEBEB}
+.carte-tab{padding:10px 18px;border:none;background:transparent;color:#888;font-size:13px;cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.carte-tab.active{color:#1A1A2E;font-weight:600;border-bottom-color:#1A1A2E}
+.carte-tab:hover:not(.active){color:#555}
+.carte-panel{display:none;padding:20px 0 0}
+.carte-panel.show{display:block}
+
 .loading{text-align:center;padding:60px;color:#888;font-size:14px}
 .spinner{width:32px;height:32px;border:3px solid #E0E0E0;border-top:3px solid #1A1A2E;border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
-.card{background:#fff;border-radius:12px;border:1px solid #EBEBEB;padding:20px;margin-bottom:16px}
+.card{background:#fff;border-radius:12px;border:1px solid #EBEBEB;margin-bottom:16px;overflow:hidden}
+.card-inner{padding:20px}
 .profile{display:flex;align-items:center;gap:14px;margin-bottom:20px}
 .avatar{width:48px;height:48px;border-radius:50%;background:#DBEAFE;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px;color:#1D4ED8;flex-shrink:0}
 .profile-name{font-size:17px;font-weight:600;color:#1A1A2E}
@@ -43,12 +91,27 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
 .history-text{font-size:13px;color:#333;line-height:1.6}
 .task-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:#FAFAFA;border-radius:8px;margin-bottom:6px;border:1px solid #EBEBEB}
 .task-left{display:flex;align-items:center;gap:10px;font-size:13px;color:#333}
-.task-icon{font-size:16px}
 .badge{font-size:11px;padding:3px 12px;border-radius:20px;font-weight:600}
 .badge-done{background:#D1FAE5;color:#065F46}
 .badge-wip{background:#FEF3C7;color:#92400E}
 .badge-todo{background:#F3F4F6;color:#4B5563}
 .memo-box{background:#FFFBEB;border-radius:8px;padding:14px;font-size:13px;color:#555;line-height:1.7;border:1px solid #FDE68A}
+
+/* カルテ詳細スタイル */
+.carte-block{margin-bottom:20px}
+.carte-block-title{font-size:12px;font-weight:700;color:#1A1A2E;background:#F0F4FF;padding:6px 12px;border-radius:6px;margin-bottom:8px;display:inline-block}
+.carte-block-content{font-size:13px;color:#444;line-height:1.8;white-space:pre-wrap}
+.carte-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.carte-highlight{background:#F8F9FA;border-radius:10px;padding:14px;border-left:3px solid #534AB7}
+.carte-highlight-label{font-size:10px;font-weight:700;color:#534AB7;letter-spacing:.08em;margin-bottom:6px}
+.carte-highlight-val{font-size:13px;color:#333;line-height:1.7;white-space:pre-wrap}
+.timetable{font-size:12px;color:#444;line-height:2;background:#FAFAFA;border-radius:8px;padding:12px;font-family:monospace}
+.monthly-review{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.review-item{background:#F8F9FA;border-radius:8px;padding:12px}
+.review-label{font-size:10px;font-weight:700;color:#888;margin-bottom:6px;letter-spacing:.05em}
+.review-val{font-size:12px;color:#444;line-height:1.7;white-space:pre-wrap}
+.coach-memo{background:#FFF8E1;border:1px solid #FFD54F;border-radius:10px;padding:16px;font-size:13px;color:#555;line-height:1.8;white-space:pre-wrap}
+
 .ai-card{background:#fff;border-radius:12px;border:1px solid #EBEBEB;padding:20px;margin-top:16px}
 .ai-title{font-size:13px;font-weight:600;color:#888;margin-bottom:14px}
 .ai-btn{width:100%;padding:12px;border-radius:8px;border:1px solid #D0D5DD;background:#F8F9FA;color:#1A1A2E;font-size:13px;cursor:pointer;font-family:inherit;transition:background .15s}
@@ -60,319 +123,349 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-se
 @keyframes pulse{0%,100%{opacity:.3}50%{opacity:1}}
 .ai-result{display:none;margin-top:14px;font-size:13px;line-height:1.8;color:#333;background:#F8F9FA;border-radius:8px;padding:14px}
 .ai-result.show{display:block}
-.followup{display:none;gap:8px;margin-top:12px}
-.followup.show{display:flex}
-.followup input{flex:1;padding:9px 12px;border-radius:8px;border:1px solid #D0D5DD;font-size:13px;font-family:inherit;outline:none}
-.followup input:focus{border-color:#1A1A2E}
-.followup button{padding:9px 18px;border-radius:8px;border:1px solid #D0D5DD;background:#1A1A2E;color:#fff;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap}
 .empty{text-align:center;padding:40px;color:#aaa;font-size:13px}
-.reload-btn{background:none;border:none;color:#1565C0;font-size:12px;cursor:pointer;text-decoration:underline;margin-left:8px}
-@media(max-width:600px){.kpi-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.kpi-grid,.summary-grid,.carte-grid,.monthly-review{grid-template-columns:1fr}.student-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 
 <div class="header">
   <h1>📋 受講生コーチングダッシュボード</h1>
-  <span class="subtitle" id="last-updated"></span>
-</div>
-
-<div class="config-bar" id="config-bar" style="display:none">
-  ⚠️ <strong>設定が必要です</strong> — <code>SPREADSHEET_ID</code> と <code>API_KEY</code> をファイルに設定してください。
-  <a href="#" onclick="alert('setup_guide.md を参照してください')">設定手順を見る</a>
+  <div class="header-nav">
+    <button class="nav-btn active" id="btn-summary" onclick="showView('summary')">🏠 全体</button>
+    <button class="nav-btn" id="btn-detail" onclick="showView('detail')">👤 個別</button>
+  </div>
 </div>
 
 <div class="main">
-  <div id="tabs-area" class="tabs"></div>
-  <div id="content">
-    <div class="loading"><div class="spinner"></div>データを読み込み中...</div>
+  <div id="view-summary">
+    <div id="summary-content"><div class="loading"><div class="spinner"></div>データを読み込み中...</div></div>
+  </div>
+  <div id="view-detail" style="display:none">
+    <div id="tabs-area" class="tabs"></div>
+    <div id="detail-content"><div class="loading"><div class="spinner"></div>データを読み込み中...</div></div>
   </div>
 </div>
 
 <script>
-// ============================================================
-//  ★ ここを書き換えてください（STEP 3）
-// ============================================================
 const SPREADSHEET_ID = "1VTo-TN1H3yXCQh9dyOOnM80PX-8q4ege6-pLhL7NsnI";
 const API_KEY        = "AIzaSyAlzB9Duw6IP8TVCDlmyxkj8ZJ_fEfihlU";
-// ============================================================
-
+const NOTION_LINKS = {
+  "S001":"https://app.notion.com/p/38ee7faedfc081469408f82d930aa6c2",
+  "S002":"https://app.notion.com/p/38ee7faedfc081808561fd686c1fc084",
+  "S003":"https://app.notion.com/p/38ee7faedfc081c79dffe70d11854388",
+  "S004":"https://app.notion.com/p/38ee7faedfc081548490d0b26a0f4735",
+  "top": "https://app.notion.com/p/38ee7faedfc081bc82e4c35f2e1fcfdf"
+};
 const SHEETS_BASE = `https://sheets.googleapis.com/v4/spreadsheets/${SPREADSHEET_ID}/values`;
+let allData={masters:[],sales:[],history:[],tasks:[],cartes:[]};
+let clients=[];
+let currentIdx=0;
+let chartInst=null;
 
-let allData = { masters:[], sales:[], history:[], tasks:[] };
-let clients = [];
-let currentIdx = 0;
-let chartInst = null;
+window.addEventListener('DOMContentLoaded',loadAll);
 
-// ---- 起動 ----
-window.addEventListener('DOMContentLoaded', () => {
-  if(false){
-    document.getElementById('config-bar').style.display = 'flex';
-    document.getElementById('content').innerHTML = `
-      <div class="card empty">
-        <div style="font-size:32px;margin-bottom:12px">⚙️</div>
-        <div style="font-weight:600;margin-bottom:8px">Google Sheetsとの接続設定が必要です</div>
-        <div style="color:#aaa;font-size:13px">setup_guide.md の手順にしたがって<br>SPREADSHEET_ID と API_KEY を設定してください</div>
-      </div>`;
-    return;
-  }
-  loadAll();
-});
-
-// ---- データ取得 ----
 async function fetchSheet(range){
-  const url = `${SHEETS_BASE}/${encodeURIComponent(range)}?key=${API_KEY}`;
-  const res = await fetch(url);
+  const res=await fetch(`${SHEETS_BASE}/${encodeURIComponent(range)}?key=${API_KEY}`);
   if(!res.ok) throw new Error(`Sheets API error: ${res.status}`);
-  const data = await res.json();
-  return (data.values || []).slice(3); // 1:タイトル 2:注意書き 3:ヘッダー → 4行目からデータ
+  const d=await res.json();
+  return (d.values||[]).slice(3);
 }
 
 async function loadAll(){
   try{
-    const [m, s, h, t] = await Promise.all([
+    const [m,s,h,t,c]=await Promise.all([
       fetchSheet("受講生マスタ!A:K"),
       fetchSheet("月次売上!A:H"),
       fetchSheet("コーチング履歴!A:G"),
       fetchSheet("タスク!A:G"),
+      fetchSheet("カルテ詳細!A:Q"),
     ]);
-    allData = { masters:m, sales:s, history:h, tasks:t };
+    allData={masters:m,sales:s,history:h,tasks:t,cartes:c};
     buildClients();
+    renderSummary();
     renderTabs();
-    renderClient(clients[0]);
-    document.getElementById('last-updated').textContent =
-      `最終更新: ${new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}`;
-  } catch(e){
-    document.getElementById('content').innerHTML = `
-      <div class="card empty">
-        <div style="font-size:32px;margin-bottom:12px">⚠️</div>
-        <div style="font-weight:600;margin-bottom:8px">データ取得エラー</div>
-        <div style="color:#aaa;font-size:13px">${e.message}</div>
-        <div style="margin-top:12px">
-          <button class="reload-btn" onclick="loadAll()">再読み込み</button>
-        </div>
-        <div style="margin-top:16px;font-size:12px;color:#bbb">
-          よくある原因：<br>
-          ・APIキーかSpreadsheet IDが間違っている<br>
-          ・Google CloudでSheets APIが有効化されていない<br>
-          ・Sheetsの共有設定が「リンクを知っている人が閲覧可」になっていない
-        </div>
-      </div>`;
+  }catch(e){
+    document.getElementById('summary-content').innerHTML=`<div class="section-card empty"><div style="font-size:32px;margin-bottom:12px">⚠️</div><div style="font-weight:600;margin-bottom:8px">データ取得エラー</div><div style="color:#aaa;font-size:13px">${e.message}</div></div>`;
   }
 }
 
-// ---- データ構築 ----
 function buildClients(){
-  clients = allData.masters
-    .filter(r => r[0])
-    .map(r => {
-      const id = r[0];
-      const salesRows = allData.sales.filter(s => s[1] === id);
-      const histRows  = allData.history.filter(h => h[1] === id).slice(0,5);
-      const taskRows  = allData.tasks.filter(t => t[1] === id);
-
-      // 最新月の売上
-      const sorted = [...salesRows].sort((a,b)=> (b[0]||'').localeCompare(a[0]||''));
-      const latest  = sorted[0] || [];
-      const prev    = sorted[1] || [];
-      const latestSales = parseInt((latest[4]||'0').toString().replace(/,/g,'')) || 0;
-      const prevSales   = parseInt((prev[4]||'0').toString().replace(/,/g,'')) || 0;
-      const latestCost  = parseInt((latest[5]||'0').toString().replace(/,/g,'')) || 0;
-      const margin = latestSales > 0 ? Math.round((latestSales - latestCost) / latestSales * 100) : 0;
-      const diff = latestSales - prevSales;
-
-      // 月別売上グラフ用（最新6ヶ月）
-      const months6 = [...salesRows].sort((a,b)=>(a[0]||'').localeCompare(b[0]||'')).slice(-6);
-      const chartLabels = months6.map(r => (r[0]||'').replace(/^\d{4}\//,'')+'月');
-      const chartData   = months6.map(r => Math.round((parseInt((r[4]||'0').toString().replace(/,/g,''))||0)/10000));
-
-      const totalSales = salesRows.reduce((s,r)=>{
-        return s + (parseInt((r[4]||'0').toString().replace(/,/g,''))||0);
-      }, 0);
-
-      return {
-        id, name: r[1]||'', initials: (r[1]||'').substring(0,2),
-        course: [r[5], r[6]?r[6].replace(/\//g,'/')+' 入会':''].filter(Boolean).join(' · '),
-        status: r[9]||'',
-        kpi:{
-          sales:  latestSales>0 ? Math.round(latestSales/10000)+'万円' : '—',
-          margin: latestSales>0 ? margin+'%' : '—',
-          totalSales: Math.round(totalSales/10000)+'万円',
-          diff:   diff>0 ? `先月比 +${Math.round(diff/10000)}万円` : diff<0 ? `先月比 ${Math.round(diff/10000)}万円` : '—'
-        },
-        chartLabels, chartData,
-        history: histRows.map(h=>({date:h[0]||'', text:h[4]||''})),
-        tasks: taskRows.map(t=>({text:t[3]||'', status:t[6]||'未着手', priority:t[4]||''})),
-        memo: r[10]||'',
-        aiContext: `${r[1]}さん、${r[5]||''}。最新月売上${latestSales>0?Math.round(latestSales/10000)+'万円':'不明'}、粗利率${margin}%、累計売上${Math.round(totalSales/10000)}万円。`,
-      };
-    });
+  clients=allData.masters.filter(r=>r[0]).map(r=>{
+    const id=r[0];
+    const salesRows=allData.sales.filter(s=>s[1]===id);
+    const histRows=allData.history.filter(h=>h[1]===id).slice(0,5);
+    const taskRows=allData.tasks.filter(t=>t[1]===id);
+    const carteRow=allData.cartes.find(c=>c[0]===id)||[];
+    const sorted=[...salesRows].sort((a,b)=>(b[0]||'').localeCompare(a[0]||''));
+    const latest=sorted[0]||[];
+    const prev=sorted[1]||[];
+    const latestSales=parseInt((latest[4]||'0').replace(/,/g,''))||0;
+    const prevSales=parseInt((prev[4]||'0').replace(/,/g,''))||0;
+    const latestCost=parseInt((latest[5]||'0').replace(/,/g,''))||0;
+    const margin=latestSales>0?Math.round((latestSales-latestCost)/latestSales*100):0;
+    const diff=latestSales-prevSales;
+    const months6=[...salesRows].sort((a,b)=>(a[0]||'').localeCompare(b[0]||'')).slice(-6);
+    const totalSales=salesRows.reduce((s,r)=>s+(parseInt((r[4]||'0').replace(/,/g,''))||0),0);
+    const doneTasks=taskRows.filter(t=>t[6]==='完了').length;
+    const wipTasks=taskRows.filter(t=>t[6]==='進行中').length;
+    const todoTasks=taskRows.filter(t=>t[6]==='未着手').length;
+    return {
+      id,name:r[1]||'',initials:(r[1]||'').substring(0,2),
+      course:r[5]||'',status:r[9]||'',memo:r[10]||'',
+      kpi:{
+        sales:latestSales>0?Math.round(latestSales/10000)+'万円':'—',
+        margin:latestSales>0?margin+'%':'—',
+        totalSales:Math.round(totalSales/10000)+'万円',
+        diff:diff>0?`+${Math.round(diff/10000)}万`:diff<0?`${Math.round(diff/10000)}万`:'—'
+      },
+      chartLabels:months6.map(r=>(r[0]||'').replace(/^\d{4}\//,'')+'月'),
+      chartData:months6.map(r=>Math.round((parseInt((r[4]||'0').replace(/,/g,''))||0)/10000)),
+      history:histRows.map(h=>({date:h[0]||'',text:h[4]||''})),
+      tasks:taskRows.map(t=>({text:t[3]||'',status:t[6]||'未着手'})),
+      doneTasks,wipTasks,todoTasks,latestSales,totalSales,
+      carte:{
+        motivation:carteRow[2]||'',
+        goal:carteRow[3]||'',
+        vision:carteRow[4]||'',
+        wantMost:carteRow[5]||'',
+        strengths:carteRow[6]||'',
+        cautions:carteRow[7]||'',
+        actionStyle:carteRow[8]||'',
+        timetable:carteRow[9]||'',
+        reviewGoal:carteRow[10]||'',
+        reviewObs:carteRow[11]||'',
+        reviewAnal:carteRow[12]||'',
+        reviewJudge:carteRow[13]||'',
+        reviewGood:carteRow[14]||'',
+        coachMemo:carteRow[15]||'',
+      },
+      aiContext:`${r[1]}さん、${r[5]||''}。最新月売上${latestSales>0?Math.round(latestSales/10000)+'万円':'不明'}、粗利率${margin}%。`,
+    };
+  });
 }
 
-// ---- タブ描画 ----
-function renderTabs(){
-  const area = document.getElementById('tabs-area');
-  area.innerHTML = clients.map((c,i)=>
-    `<button class="tab-btn${i===0?' active':''}" onclick="switchTab(${i})">${c.name}</button>`
-  ).join('') + `<button class="tab-btn" onclick="loadAll()" style="margin-left:auto;color:#888">↺ 更新</button>`;
+// ===== 全体サマリー =====
+function renderSummary(){
+  const totalSales=clients.reduce((s,c)=>s+c.latestSales,0);
+  const totalDone=clients.reduce((s,c)=>s+c.doneTasks,0);
+  const totalWip=clients.reduce((s,c)=>s+c.wipTasks,0);
+  const totalTodo=clients.reduce((s,c)=>s+c.todoTasks,0);
+  const taskRows=[
+    {label:'GS1コード登録',vals:['✅','✅','🔲','✅']},
+    {label:'商標登録',vals:['✅','✅','🔄','✅']},
+    {label:'広告外注スタート',vals:['✅','🔲','🔲','✅']},
+    {label:'Amazonページ作成',vals:['🔲','🔲','🔲','✅']},
+    {label:'Keepaリサーチ',vals:['🔄','🔄','🔄','🔲']},
+  ];
+  document.getElementById('summary-content').innerHTML=`
+    <div class="summary-grid">
+      <div class="summary-kpi"><div class="label">先月合計売上</div><div class="val">${Math.round(totalSales/10000)}万円</div><div class="sub">4名合計</div></div>
+      <div class="summary-kpi"><div class="label">受講生数</div><div class="val">${clients.length}名</div><div class="sub">1期生</div></div>
+      <div class="summary-kpi"><div class="label">完了タスク</div><div class="val">${totalDone}</div><div class="sub">全${totalDone+totalWip+totalTodo}件中</div></div>
+      <div class="summary-kpi"><div class="label">進行中タスク</div><div class="val">${totalWip}</div><div class="sub">未着手${totalTodo}件</div></div>
+    </div>
+    <div class="section-card">
+      <div class="section-head">👥 受講生カード</div>
+      <div class="student-grid">
+        ${clients.map((c,i)=>`
+          <div class="student-card" onclick="goToDetail(${i})">
+            <div class="sc-top">
+              <div class="sc-avatar">${c.initials}</div>
+              <div><div class="sc-name">${c.name}</div><div class="sc-course">${c.course}</div></div>
+              <span style="margin-left:auto;font-size:10px;background:#F0FDF4;color:#065F46;padding:3px 8px;border-radius:10px">${c.status}</span>
+            </div>
+            <div class="sc-kpis">
+              <div class="sc-kpi"><div class="sc-kpi-label">先月売上</div><div class="sc-kpi-val">${c.kpi.sales}</div></div>
+              <div class="sc-kpi"><div class="sc-kpi-label">粗利率</div><div class="sc-kpi-val">${c.kpi.margin}</div></div>
+              <div class="sc-kpi"><div class="sc-kpi-label">累計</div><div class="sc-kpi-val">${c.kpi.totalSales}</div></div>
+            </div>
+            <div class="sc-tags">
+              ${c.doneTasks>0?`<span class="sc-tag tag-done">✅完了${c.doneTasks}</span>`:''}
+              ${c.wipTasks>0?`<span class="sc-tag tag-wip">🔄進行中${c.wipTasks}</span>`:''}
+              ${c.todoTasks>0?`<span class="sc-tag tag-todo">⭕未着手${c.todoTasks}</span>`:''}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-head">✅ 全体タスク進捗</div>
+      <table class="progress-table">
+        <thead><tr><th>タスク</th>${clients.map(c=>`<th>${c.name}</th>`).join('')}</tr></thead>
+        <tbody>${taskRows.map(row=>`<tr><td style="font-size:12px;color:#555">${row.label}</td>${row.vals.map(v=>`<td style="text-align:center;font-size:16px">${v}</td>`).join('')}</tr>`).join('')}</tbody>
+      </table>
+    </div>
+    <div class="section-card">
+      <div class="section-head">📒 Notionカルテへのリンク</div>
+      <div style="margin-bottom:10px">
+        <a href="${NOTION_LINKS.top}" target="_blank" class="notion-link" style="background:#F0F4FF;border-color:#C7D2FE">
+          <span>🏫</span><span style="font-weight:600">1期生カルテ一覧（目次）</span><span class="notion-link-arrow">↗</span>
+        </a>
+      </div>
+      <div class="notion-links">
+        ${clients.map(c=>`<a href="${NOTION_LINKS[c.id]||'#'}" target="_blank" class="notion-link"><span>📋</span><span>${c.name}のカルテ</span><span class="notion-link-arrow">↗</span></a>`).join('')}
+      </div>
+    </div>
+    <div class="section-card">
+      <div class="section-head">📅 次回イベント</div>
+      <div style="font-size:13px;color:#333">📌 <strong>6月30日（火）</strong> Keepaリサーチセミナー（ひで担当）</div>
+    </div>`;
 }
 
-function switchTab(idx){
-  currentIdx = idx;
+function goToDetail(idx){
+  currentIdx=idx;
+  showView('detail');
   document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   renderClient(clients[idx]);
 }
 
-// ---- クライアント描画 ----
+// ===== タブ =====
+function renderTabs(){
+  document.getElementById('tabs-area').innerHTML=
+    clients.map((c,i)=>`<button class="tab-btn${i===0?' active':''}" onclick="switchTab(${i})">${c.name}</button>`).join('')+
+    `<button class="tab-btn" onclick="loadAll()" style="margin-left:auto;color:#888">↺ 更新</button>`;
+  renderClient(clients[0]);
+}
+
+function switchTab(idx){
+  currentIdx=idx;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
+  renderClient(clients[idx]);
+}
+
+// ===== 個別 =====
 function renderClient(c){
-  if(!c){ document.getElementById('content').innerHTML='<div class="empty">受講生データがありません</div>'; return; }
+  if(!c){document.getElementById('detail-content').innerHTML='<div class="empty">データがありません</div>';return;}
+  const bc=s=>s==='完了'?'badge-done':s==='進行中'?'badge-wip':'badge-todo';
+  const ti=s=>s==='完了'?'✅':s==='進行中'?'🔄':'⭕';
+  const ct=c.carte;
 
-  const badgeClass = s => s==='完了'?'badge-done':s==='進行中'?'badge-wip':'badge-todo';
-  const taskIcon   = s => s==='完了'?'✅':s==='進行中'?'🔄':'⭕';
-
-  document.getElementById('content').innerHTML = `
+  document.getElementById('detail-content').innerHTML=`
     <div class="card">
-      <div class="profile">
-        <div class="avatar">${c.initials}</div>
-        <div>
-          <div class="profile-name">${c.name}</div>
-          <div class="profile-sub">${c.course}</div>
+      <div class="card-inner">
+        <div class="profile">
+          <div class="avatar">${c.initials}</div>
+          <div>
+            <div class="profile-name">${c.name}</div>
+            <div class="profile-sub">${c.course}</div>
+          </div>
+          <span style="margin-left:auto;font-size:11px;background:#F0FDF4;color:#065F46;padding:4px 12px;border-radius:20px;font-weight:600">${c.status}</span>
         </div>
-        <span style="margin-left:auto;font-size:11px;background:#F0FDF4;color:#065F46;padding:4px 12px;border-radius:20px;font-weight:600">${c.status}</span>
+        <div class="kpi-grid">
+          <div class="kpi"><div class="kpi-label">今月売上</div><div class="kpi-val">${c.kpi.sales}</div><div class="kpi-sub">先月比 ${c.kpi.diff}</div></div>
+          <div class="kpi"><div class="kpi-label">粗利率</div><div class="kpi-val">${c.kpi.margin}</div></div>
+          <div class="kpi"><div class="kpi-label">累計売上</div><div class="kpi-val">${c.kpi.totalSales}</div></div>
+          <div class="kpi"><div class="kpi-label">ステータス</div><div class="kpi-val" style="font-size:15px">${c.status}</div></div>
+        </div>
       </div>
 
-      <div class="kpi-grid">
-        <div class="kpi"><div class="kpi-label">今月売上</div><div class="kpi-val">${c.kpi.sales}</div><div class="kpi-sub">${c.kpi.diff}</div></div>
-        <div class="kpi"><div class="kpi-label">粗利率</div><div class="kpi-val">${c.kpi.margin}</div></div>
-        <div class="kpi"><div class="kpi-label">累計売上</div><div class="kpi-val">${c.kpi.totalSales}</div></div>
-        <div class="kpi"><div class="kpi-label">ステータス</div><div class="kpi-val" style="font-size:15px">${c.status}</div></div>
+      <!-- カルテ内タブ -->
+      <div style="border-top:1px solid #EBEBEB">
+        <div class="carte-tabs">
+          <button class="carte-tab active" onclick="switchCarteTab('sales',this)">📈 売上・実績</button>
+          <button class="carte-tab" onclick="switchCarteTab('carte',this)">📋 カルテ詳細</button>
+          <button class="carte-tab" onclick="switchCarteTab('coaching',this)">🗓 コーチング</button>
+          <button class="carte-tab" onclick="switchCarteTab('task',this)">✅ タスク</button>
+        </div>
+        <div class="card-inner">
+
+          <!-- 売上・実績 -->
+          <div class="carte-panel show" id="panel-sales">
+            ${c.chartData.length>0?`<div class="section-label">売上推移（万円）</div><div class="chart-wrap"><canvas id="salesChart"></canvas></div>`:''}
+          </div>
+
+          <!-- カルテ詳細 -->
+          <div class="carte-panel" id="panel-carte">
+            ${ct.goal?`<div class="carte-block"><span class="carte-block-title">🎯 半年後の目標</span><div class="carte-block-content" style="font-size:15px;font-weight:600;color:#534AB7">${ct.goal}</div></div>`:''}
+            <div class="carte-grid">
+              ${ct.strengths?`<div class="carte-highlight"><div class="carte-highlight-label">💪 強み</div><div class="carte-highlight-val">${ct.strengths}</div></div>`:''}
+              ${ct.cautions?`<div class="carte-highlight" style="border-left-color:#F39C12"><div class="carte-highlight-label" style="color:#F39C12">⚠️ 注意点</div><div class="carte-highlight-val">${ct.cautions}</div></div>`:''}
+            </div>
+            ${ct.motivation?`<div class="carte-block" style="margin-top:16px"><span class="carte-block-title">💬 参加動機</span><div class="carte-block-content">${ct.motivation}</div></div>`:''}
+            ${ct.vision?`<div class="carte-block"><span class="carte-block-title">🌟 実現したい未来</span><div class="carte-block-content">${ct.vision}</div></div>`:''}
+            ${ct.wantMost?`<div class="carte-block"><span class="carte-block-title">🏆 一番手に入れたいもの</span><div class="carte-block-content" style="font-style:italic;color:#534AB7">"${ct.wantMost}"</div></div>`:''}
+            ${ct.timetable?`<div class="carte-block"><span class="carte-block-title">⏰ タイムテーブル</span><div class="timetable">${ct.timetable}</div></div>`:''}
+            ${ct.actionStyle?`<div class="carte-block"><span class="carte-block-title">🏃 行動スタイル</span><div class="carte-block-content">${ct.actionStyle}</div></div>`:''}
+            ${ct.coachMemo?`<div class="carte-block"><span class="carte-block-title">📝 コーチメモ</span><div class="coach-memo">${ct.coachMemo}</div></div>`:''}
+          </div>
+
+          <!-- コーチング履歴 -->
+          <div class="carte-panel" id="panel-coaching">
+            <div class="section-label">月次振り返り</div>
+            <div class="monthly-review" style="margin-bottom:20px">
+              ${ct.reviewGoal?`<div class="review-item"><div class="review-label">🎯 目標</div><div class="review-val">${ct.reviewGoal}</div></div>`:''}
+              ${ct.reviewObs?`<div class="review-item"><div class="review-label">👁 観察</div><div class="review-val">${ct.reviewObs}</div></div>`:''}
+              ${ct.reviewAnal?`<div class="review-item"><div class="review-label">🔍 分析</div><div class="review-val">${ct.reviewAnal}</div></div>`:''}
+              ${ct.reviewJudge?`<div class="review-item"><div class="review-label">✍️ 判断・修正</div><div class="review-val">${ct.reviewJudge}</div></div>`:''}
+              ${ct.reviewGood?`<div class="review-item" style="grid-column:1/-1;background:#E8F8F0"><div class="review-label" style="color:#27AE60">✨ 良い変化</div><div class="review-val">${ct.reviewGood}</div></div>`:''}
+            </div>
+            <div class="section-label">面談履歴</div>
+            ${c.history.length>0?c.history.map(h=>`<div class="history-item"><div class="history-date">${h.date}</div><div class="history-text">${h.text}</div></div>`).join(''):'<div class="empty" style="padding:20px">履歴なし</div>'}
+          </div>
+
+          <!-- タスク -->
+          <div class="carte-panel" id="panel-task">
+            ${c.tasks.length>0?c.tasks.map(t=>`<div class="task-item"><div class="task-left"><span>${ti(t.status)}</span>${t.text}</div><span class="badge ${bc(t.status)}">${t.status}</span></div>`).join(''):'<div class="empty" style="padding:20px">タスクなし</div>'}
+            ${c.memo?`<div class="divider"></div><div class="section-label">特記事項</div><div class="memo-box">${c.memo}</div>`:''}
+          </div>
+
+        </div>
       </div>
-
-      ${c.chartData.length>0 ? `
-      <div class="section-label">売上推移（万円）</div>
-      <div class="chart-wrap"><canvas id="salesChart" role="img" aria-label="${c.name}の売上推移"></canvas></div>
-      ` : ''}
-
-      <div class="divider"></div>
-
-      <div class="section-label">コーチング履歴</div>
-      ${c.history.length>0 ? c.history.map(h=>`
-        <div class="history-item">
-          <div class="history-date">${h.date}</div>
-          <div class="history-text">${h.text}</div>
-        </div>`).join('') : '<div class="empty" style="padding:20px">履歴なし</div>'}
-
-      <div class="divider"></div>
-
-      <div class="section-label">タスク</div>
-      ${c.tasks.length>0 ? c.tasks.map(t=>`
-        <div class="task-item">
-          <div class="task-left"><span class="task-icon">${taskIcon(t.status)}</span>${t.text}</div>
-          <span class="badge ${badgeClass(t.status)}">${t.status}</span>
-        </div>`).join('') : '<div class="empty" style="padding:20px">タスクなし</div>'}
-
-      ${c.memo ? `
-      <div class="divider"></div>
-      <div class="section-label">特記事項</div>
-      <div class="memo-box">${c.memo}</div>
-      ` : ''}
     </div>
 
     <div class="ai-card">
       <div class="ai-title">✨ AI コーチングサマリー</div>
-      <button class="ai-btn" id="ai-btn" onclick="generateSummary()">
-        ✦ AI サマリーを生成する →
-      </button>
-      <div class="ai-loading" id="ai-loading">
-        <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-        <span>Claude が分析中...</span>
-      </div>
+      <button class="ai-btn" id="ai-btn" onclick="generateSummary()">✦ AI サマリーを生成する →</button>
+      <div class="ai-loading" id="ai-loading"><div class="dot"></div><div class="dot"></div><div class="dot"></div><span>Claude が分析中...</span></div>
       <div class="ai-result" id="ai-result"></div>
-      <div class="followup" id="followup">
-        <input type="text" id="followup-input" placeholder="フォローアップ質問を入力..." />
-        <button onclick="askFollowup()">送信</button>
-      </div>
-    </div>
-  `;
+    </div>`;
 
-  if(c.chartData.length > 0) drawChart(c);
+  if(c.chartData.length>0) drawChart(c);
+}
+
+function switchCarteTab(panel, btn){
+  document.querySelectorAll('.carte-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.carte-panel').forEach(p=>p.classList.remove('show'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+panel).classList.add('show');
+  if(panel==='sales') drawChart(clients[currentIdx]);
 }
 
 function drawChart(c){
-  if(chartInst){ chartInst.destroy(); chartInst=null; }
-  const ctx = document.getElementById('salesChart');
+  if(chartInst){chartInst.destroy();chartInst=null;}
+  const ctx=document.getElementById('salesChart');
   if(!ctx) return;
-  chartInst = new Chart(ctx,{
-    type:'bar',
-    data:{
-      labels:c.chartLabels,
-      datasets:[{
-        label:'売上（万円）',
-        data:c.chartData,
-        backgroundColor: c.chartData.map((_,i)=>i===c.chartData.length-1?'#534AB7':'#AFA9EC'),
-        borderRadius:4, borderSkipped:false
-      }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{legend:{display:false}, tooltip:{callbacks:{label:v=>`${v.raw}万円`}}},
-      scales:{
-        x:{grid:{display:false}, ticks:{color:'#aaa',font:{size:11}}, border:{display:false}},
-        y:{display:false, min:0}
-      }
-    }
-  });
+  chartInst=new Chart(ctx,{type:'bar',data:{labels:c.chartLabels,datasets:[{label:'売上（万円）',data:c.chartData,backgroundColor:c.chartData.map((_,i)=>i===c.chartData.length-1?'#534AB7':'#AFA9EC'),borderRadius:4,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:v=>`${v.raw}万円`}}},scales:{x:{grid:{display:false},ticks:{color:'#aaa',font:{size:11}},border:{display:false}},y:{display:false,min:0}}}});
 }
 
-// ---- AI サマリー ----
+function showView(v){
+  document.getElementById('view-summary').style.display=v==='summary'?'block':'none';
+  document.getElementById('view-detail').style.display=v==='detail'?'block':'none';
+  document.getElementById('btn-summary').classList.toggle('active',v==='summary');
+  document.getElementById('btn-detail').classList.toggle('active',v==='detail');
+}
+
 async function generateSummary(){
-  const c = clients[currentIdx];
+  const c=clients[currentIdx];
   document.getElementById('ai-btn').style.display='none';
   document.getElementById('ai-loading').classList.add('show');
-
-  const histText = c.history.map(h=>`${h.date}: ${h.text}`).join(' / ');
-  const taskText = c.tasks.filter(t=>t.status!=='完了').map(t=>t.text).join(', ') || 'なし';
-
-  const prompt = `あなたは経験豊富なビジネスコーチです。以下の受講生データをもとに、コーチング視点での簡潔なサマリーを日本語で生成してください。
-
-受講生データ: ${c.aiContext}
-コーチング履歴: ${histText||'なし'}
-未完了タスク: ${taskText}
-特記事項: ${c.memo||'なし'}
-
-以下の形式で出力してください（プレーンテキスト）:
-【現状評価】1〜2文
-【強み】箇条書き2点
-【次のアクション】具体的なアクション2点
-【次回セッションで確認すること】1点`;
-
+  const ct=c.carte;
+  const prompt=`あなたは経験豊富なビジネスコーチです。以下の受講生データをもとに、コーチング視点での簡潔なサマリーを日本語で生成してください。\n受講生: ${c.name}（${c.course}）\n目標: ${ct.goal}\n強み: ${ct.strengths}\n注意点: ${ct.cautions}\n参加動機: ${ct.motivation}\n最新売上: ${c.kpi.sales}、粗利率: ${c.kpi.margin}\n未完了タスク: ${c.tasks.filter(t=>t.status!=='完了').map(t=>t.text).join(', ')||'なし'}\nコーチメモ: ${ct.coachMemo}\n\n以下の形式で出力してください（プレーンテキスト）:\n【現状評価】1〜2文\n【強み】箇条書き2点\n【次のアクション】具体的なアクション2点\n【次回セッションで確認すること】1点`;
   try{
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})
-    });
-    const data = await res.json();
-    const text = data.content?.find(b=>b.type==='text')?.text || 'サマリーを生成できませんでした。';
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content?.find(b=>b.type==='text')?.text||'サマリーを生成できませんでした。';
     document.getElementById('ai-loading').classList.remove('show');
-    document.getElementById('ai-result').innerHTML = text.replace(/\n/g,'<br>');
+    document.getElementById('ai-result').innerHTML=text.replace(/\n/g,'<br>');
     document.getElementById('ai-result').classList.add('show');
-    document.getElementById('followup').classList.add('show');
-  } catch(e){
+  }catch(e){
     document.getElementById('ai-loading').classList.remove('show');
-    document.getElementById('ai-result').innerHTML = 'エラーが発生しました。もう一度お試しください。';
+    document.getElementById('ai-result').innerHTML='エラーが発生しました。もう一度お試しください。';
     document.getElementById('ai-result').classList.add('show');
     document.getElementById('ai-btn').style.display='block';
   }
 }
-
-function askFollowup(){
-  const input = document.getElementById('followup-input');
-  const text = input.value.trim();
-  if(!text) return;
-  alert(`質問「${text}」を送信しました（Claude連携版では実際にAPIに送信されます）`);
-  input.value='';
-}
 </script>
 </body>
 </html>
+完了
